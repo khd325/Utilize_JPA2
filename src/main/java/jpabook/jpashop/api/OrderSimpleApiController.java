@@ -2,9 +2,12 @@ package jpabook.jpashop.api;
 
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
-import jpabook.jpashop.domain.OrderSearch;
+import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
     @GetMapping("/api/v1/simple-orders")
     public List<Order> ordersV1(){
@@ -38,15 +42,39 @@ public class OrderSimpleApiController {
     }
 
     @GetMapping("/api/v2/simple-orders")
-    public List<SimpleOrderDto> ordersV2(){
+    public Result<SimpleOrderDto> ordersV2(){
 
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
 
-        List<SimpleOrderDto> result = orders.stream()
+        List<SimpleOrderDto> collect = orders.stream()
                 .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());
 
-        return result;
+        return new Result<SimpleOrderDto>(collect.size(),collect);
+    }
+
+    @GetMapping("/api/v3/simple-orders")
+    public Result<SimpleOrderDto> ordersV3(){
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+        List<SimpleOrderDto> collect = orders.stream()
+                .map(o -> new SimpleOrderDto(o))
+                .collect(Collectors.toList());
+
+        return new Result<>(collect.size(),collect);
+    }
+
+    @GetMapping("/api/v4/simple-orders")
+    public Result<OrderSimpleQueryDto> ordersV4(){
+        List<OrderSimpleQueryDto> orders = orderSimpleQueryRepository.findOrderDtos();
+
+        return new Result<>(orders.size(),orders);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T>{
+        private int count;
+        private List<T> data;
     }
 
     @Data
