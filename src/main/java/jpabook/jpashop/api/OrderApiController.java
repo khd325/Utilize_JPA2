@@ -10,7 +10,10 @@ import jpabook.jpashop.repository.OrderSearch;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.RequestParam;
+=======
+>>>>>>> origin/master
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -58,9 +61,14 @@ public class OrderApiController {
     }
 
     @GetMapping("/api/v3.1/orders")
+<<<<<<< HEAD
     public List<OrderDto> ordersV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
                                         @RequestParam(value = "limit", defaultValue = "100") int limit) {
         List<Order> orders = orderRepository.findAllWithMemberDelivery(offset,limit);
+=======
+    public List<OrderDto> ordersV3_page() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+>>>>>>> origin/master
 
         List<OrderDto> result = orders.stream()
                 .map(o -> new OrderDto(o))
