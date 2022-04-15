@@ -98,7 +98,9 @@ public class OrderRepository {
                 .getResultList();
     }
 
-
+    public List<Order> findAll(OrderSearch orderSearch){
+        
+    }
 
     public List<Order> findAllWithMemberDelivery() {
         return em.createQuery(
